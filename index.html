@@ -691,13 +691,13 @@
 
                 // --- SISTEM PELURU BANYAK: Memasukkan parameter text, query, dan q sekaligus ---
                 if (settings.apiModel === 'ditzz') {
-                    apiUrl = `https://api-faa.my.id/faa/ai-promt?prompt=${safePrompt}&query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
+                    apiUrl = `https://api-faa.my.id/faa/gpt-promt?prompt=${safePrompt}&query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
                 } else if (settings.apiModel === 'bard') {
                     apiUrl = `https://api-faa.my.id/faa/bard-google?query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
                 } else if (settings.apiModel === 'claude') {
                     apiUrl = `https://api-faa.my.id/faa/claude-ai?text=${safeQuery}&query=${safeQuery}&q=${safeQuery}`;
                 } else if (settings.apiModel === 'api_custom') {
-                    apiUrl = `https://api-barumu.com/chat?text=${safeQuery}`;
+                    apiUrl = `https://api-Ditzx.com/chat?text=${safeQuery}`;
                 }
 
                 if (apiUrl !== "") {
