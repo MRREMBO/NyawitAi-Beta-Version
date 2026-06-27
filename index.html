@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NyawitAI |  Version 2.0 (Multi-API)</title>
+    <title>NyawitAI |  Version 2.0 (Multi-AI)</title>
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css">
@@ -225,7 +225,7 @@
 
     <div id="app">
         <header>
-            <div class="title">🧠 NyawitAI Pro 5.0</div>
+            <div class="title">🧠 NyawitAI Multi-Ai 2.0</div>
             
             <button id="menuToggleBtn" class="btn-control" onclick="toggleMenu()">⚙️ Menu</button>
             
@@ -639,16 +639,20 @@
                     const imgPrompt = finalQuery.substring(8).trim();
                     const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(imgPrompt)}?seed=${Math.floor(Math.random()*10000)}&width=512&height=512&nologo=true`;
                     hideTypingIndicator(); const bub = addMessage('ai', "");
-                    await typeWriterEffect(bub, `Visualisasi untuk: **${imgPrompt}**\n<br><img src="${imgUrl}">`);
+                    await typeWriterEffect(bub, `Wait Proses 
+                    Visualisasi untuk: **${imgPrompt}**\n<br><img src="${imgUrl}">`);
                     finishGeneration(); return;
                 }
 
-                if (finalQuery.toLowerCase().startsWith('/download ')) {
+                                if (finalQuery.toLowerCase().startsWith('/download ')) {
                     const videoUrl = finalQuery.substring(10).trim();
                     const dlApiUrl = `https://api-faa.my.id/faa/aio?url=${encodeURIComponent(videoUrl)}`;
                     
                     hideTypingIndicator(); 
                     const bub = addMessage('ai', "");
+                    
+                    // Menambahkan teks loading sementara sebelum video muncul
+                    bub.innerHTML = "<em>🔄 Sedang mengambil media...</em>";
                     
                     try {
                         const dlRes = await fetch(dlApiUrl);
@@ -656,28 +660,50 @@
                         
                         if (dlData.status === true && dlData.result) {
                             const res = dlData.result;
-                            let replyText = `📥 **Berhasil Menemukan Video! (Source: ${res.source})**\n\n`;
+                            let replyText = `📥 **Berhasil Menemukan Media! (Source: ${res.source})**\n\n`;
                             replyText += `**Judul:** ${res.title || "Tidak ada judul"}\n\n`;
-                            replyText += `**Pilih Opsi Unduhan:**\n`;
                             
                             if (res.medias && res.medias.length > 0) {
                                 res.medias.forEach(media => {
-                                    replyText += `- [Download ${media.quality} (${media.extension})](${media.url})\n`;
+                                    let ext = media.extension ? media.extension.toLowerCase() : "";
+                                    let qual = media.quality ? media.quality.toLowerCase() : "";
+                                    
+                                    replyText += `**Kualitas: ${media.quality || "Default"}**\n`;
+                                    
+                                    if (ext.includes("mp4") || ext.includes("webm") || ext.includes("mkv") || qual.includes("watermark") || qual.includes("video")) {
+                                        replyText += `<video controls style="width: 100%; border-radius: 8px; margin-bottom: 5px;" src="${media.url}"></video>\n`;
+                                        replyText += `🎥 [Klik unk download](${media.url})\n\n`;
+                                    } else if (ext.includes("mp3") || ext.includes("m4a") || qual.includes("audio")) {
+                                        replyText += `<audio controls style="width: 100%; margin-bottom: 5px;" src="${media.url}"></audio>\n`;
+                                        replyText += `🎵 [Klik unk download](${media.url})\n\n`;
+                                    } else if (ext.includes("jpg") || ext.includes("png") || ext.includes("jpeg") || ext.includes("webp")) {
+                                        replyText += `<img src="${media.url}" style="width: 100%; border-radius: 8px; margin-bottom: 5px;" alt="Image">\n`;
+                                        replyText += `🖼️ [Klik unk download](${media.url})\n\n`;
+                                    } else {
+                                        replyText += `📄 [Klik unk download](${media.url})\n\n`;
+                                    }
+                                    
+                                    replyText += `---\n`;
                                 });
                             } else {
                                 replyText += `❌ Link media tidak ditemukan di dalam respons API.\n`;
                             }
                             
-                            await typeWriterEffect(bub, replyText);
+                            // --- BAGIAN YANG DIUBAH: RENDER INSTAN TANPA EFEK NGETIK ---
+                            // Kita gunakan marked.parse() agar format tebal (**) dan link HTML langsung jadi
+                            bub.innerHTML = marked.parse(replyText);
+                            // ------------------------------------------------------------
+                            
                         } else {
-                            await typeWriterEffect(bub, `❌ Gagal memproses URL. Pastikan link yang dikirim valid dan tidak diprivate.`);
+                            bub.innerHTML = marked.parse(`❌ Gagal memproses URL. Pastikan link yang dikirim valid dan tidak diprivate.`);
                         }
                     } catch (err) {
-                        await typeWriterEffect(bub, `❌ Terjadi kesalahan koneksi saat mencoba mengambil video.`);
+                        bub.innerHTML = marked.parse(`❌ Terjadi kesalahan koneksi saat mencoba mengambil media.`);
                     }
                     
                     finishGeneration(); return;
                 }
+
 
                 abortController = new AbortController();
                 const timeoutId = setTimeout(() => abortController.abort(), 15000); 
