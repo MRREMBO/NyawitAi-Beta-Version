@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NyawitAI | UI Redesign</title>
+    <title>NyawitAI | UI Redesign V3</title>
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css">
@@ -187,11 +187,16 @@
         .preview-header span { color: white; font-weight: 600; font-size: 14px; }
         .close-preview-btn { background: #ef4444; border: none; color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; }
         #codePreviewFrame { flex: 1; width: 100%; border: none; background: #fff; }
+
+        body.party-mode #bg { animation: partyBG 0.8s infinite alternate !important; background: #000; z-index: 100;}
+        @keyframes partyBG { 0% { background: #ff0000; } 33% { background: #00ff00; } 66% { background: #0000ff; } 100% { background: #ff00ff; } }
     </style>
 </head>
 <body>
     <audio id="sfxSend" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
     <audio id="sfxReceive" src="https://g.top4top.io/m_3824qlqkj0.mp3"></audio>
+    <audio id="bgMusic" loop><source src="https://d.top4top.io/m_3820ralgz0.mp3" type="audio/mpeg"></audio>
+    <audio id="partyMusic" loop><source src="https://g.top4top.io/m_3822qs5170.mp3" type="audio/mpeg"></audio>
 
     <div id="bg"></div>
 
@@ -220,25 +225,31 @@
             <button class="btn-control btn-accent" onclick="createNewSession()"><i class="fa-solid fa-plus"></i> Chat Baru</button>
             <div style="margin-top: 10px;">
                 <select id="apiMenu" class="dropdown-menu" onchange="saveSettingsLocal()">
-                    <option value="ditzz">🤖 Model: Nyawit AI</option>
-                    <option value="bard">🌟 Model: Gemini</option>
+                    <option value="ditzz">🤖 Model: Nyawit AI (Bawaan)</option>
+                    <option value="bard">🌟 Model: Gemini / Bard</option>
                     <option value="claude">🧠 Model: Claude AI</option>
+                    <option value="api_custom">🚀 Model: API Custom</option>
                 </select>
                 <select id="personaMenu" class="dropdown-menu" onchange="saveSettingsLocal()">
-                    <option value="humor">😂 Humoris</option>
-                    <option value="pro">👔 Profesional</option>
-                    <option value="hacker">💻 Hacker</option>
+                    <option value="humor">😂 Kepribadian: Humoris</option>
+                    <option value="pro">👔 Kepribadian: Profesional</option>
+                    <option value="hacker">💻 Kepribadian: Hacker</option>
+                    <option value="teman">🤗 Kepribadian: Teman Curhat</option>
                 </select>
                 <select id="featureMenu" class="dropdown-menu" onchange="updatePlaceholder()">
-                    <option value="chat">💬 Chat Normal</option>
-                    <option value="/gambar">🎨 Buat Gambar</option>
+                    <option value="chat">💬 Chat AI</option>
+                    <option value="/gambar">🎨 Gambar</option>
                     <option value="/cuaca">☁️ Cuaca</option>
-                    <option value="/search">🌐 Web Search</option>
+                    <option value="/satelit">🛰️ Lacak ISS</option>
+                    <option value="/qr">🔲 QR Code</option>
+                    <option value="/download">📥 Download Video</option>
+                    <option value="/party">🪩 Mode Pesta</option>
                 </select>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button id="musicBtn" class="btn-control" onclick="toggleMusic()"><i class="fa-solid fa-music"></i> ON</button>
                 <button id="voiceBtn" class="btn-control" onclick="toggleVoice()"><i class="fa-solid fa-volume-high"></i> ON</button>
-                <button class="btn-control btn-danger" onclick="clearChat()"><i class="fa-solid fa-trash-can"></i> Bersih</button>
+                <button class="btn-control btn-danger" onclick="clearChat()" style="grid-column: span 2;"><i class="fa-solid fa-trash-can"></i> Bersihkan Obrolan</button>
             </div>
             <div style="margin-top: 15px; border-top: 1px solid var(--glass-border); padding-top: 15px;">
                 <label style="font-size: 11px; color: var(--text-muted); margin-bottom:10px; display:block;">Histori Obrolan</label>
@@ -309,7 +320,6 @@
 
     <script>
         // ================= BYPASS KEAMANAN LOCALSTORAGE =================
-        // Ini memastikan web tidak akan crash saat dibuka via content:// (ZArchiver/File Manager)
         let memoryStorage = {};
         const safeStorage = {
             getItem: (k) => { try { return localStorage.getItem(k); } catch(e) { return memoryStorage[k] || null; } },
@@ -327,10 +337,12 @@
         const stopBtn = document.getElementById('stopBtn');
         const sfxSend = document.getElementById('sfxSend');
         const sfxReceive = document.getElementById('sfxReceive');
+        const bgMusic = document.getElementById('bgMusic');
+        const partyMusic = document.getElementById('partyMusic');
 
         let isGenerating = false;
         let abortController = null;
-        let settings = { voice: true, persona: 'humor', apiModel: 'ditzz' };
+        let settings = { music: true, voice: true, persona: 'humor', apiModel: 'ditzz' };
         let attachedImageBase64 = null;
         
         let currentSessionId = safeStorage.getItem('nyawit_active_session') || 'nyawit_history_v8'; 
@@ -343,6 +355,7 @@
 
         function startApp() {
             loadSettingsLocal();
+            if(settings.music) bgMusic.play().catch(e=>{});
             welcomeScreen.style.opacity = '0';
             welcomeScreen.style.transform = 'scale(1.05)';
             setTimeout(() => {
@@ -473,6 +486,9 @@
                 const voiceBtn = document.getElementById('voiceBtn');
                 if(settings.voice) { voiceBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> ON'; voiceBtn.style.color = 'white'; } 
                 else { voiceBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> OFF'; voiceBtn.style.color = 'var(--text-muted)'; }
+                const musicBtn = document.getElementById('musicBtn');
+                if(settings.music) { musicBtn.innerHTML = '<i class="fa-solid fa-music"></i> ON'; musicBtn.style.color = 'white'; } 
+                else { musicBtn.innerHTML = '<i class="fa-solid fa-music"></i> OFF'; musicBtn.style.color = 'var(--text-muted)'; }
             } catch(e){}
         }
 
@@ -489,6 +505,26 @@
             else { voiceBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> OFF'; voiceBtn.style.color = 'var(--text-muted)'; if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
         }
 
+        function toggleMusic() {
+            settings.music = !settings.music; saveSettingsLocal();
+            const musicBtn = document.getElementById('musicBtn');
+            const isParty = document.body.classList.contains('party-mode');
+            if (!settings.music) {
+                bgMusic.pause(); partyMusic.pause(); musicBtn.innerHTML = '<i class="fa-solid fa-music"></i> OFF'; musicBtn.style.color = 'var(--text-muted)';
+            } else {
+                if (isParty) partyMusic.play(); else bgMusic.play();
+                musicBtn.innerHTML = '<i class="fa-solid fa-music"></i> ON'; musicBtn.style.color = 'white';
+            }
+        }
+
+        function getSystemPrompt() {
+            const p = settings.persona;
+            if(p === 'pro') return "Kamu adalah Nyawit AI yang dibuat oleh Ditzz. Kamu adalah asisten profesional yang menjawab dengan sangat formal, akurat, padat, dan jelas tanpa basa-basi.";
+            if(p === 'hacker') return "Kamu adalah Nyawit AI yang dibuat oleh Ditzz. Kamu berbicara selayaknya hacker elit, sering menggunakan istilah teknis komputer, cyber security, dan menjawab dengan gaya misterius.";
+            if(p === 'teman') return "Kamu adalah Nyawit AI yang dibuat oleh Ditzz. Kamu adalah teman curhat yang sangat empatik, pendengar yang baik, hangat, dan selalu memberikan dukungan moral dengan bahasa santai gaul Indonesia.";
+            return "kamu adalah Nyawit AI yang di buat oleh ditzz kalo di tanya siapa pembuat mu kamu harus jawab ditzz, kamu ai yang ramah dan penuh dengan humor khas orang Indonesia dengan jokes-jokes yang sering bilang : saya akan lawan, dan hey antek antek asing, 19 juta lapangan pekerjaan, dan juga kamu harus kirim emoji setiap di tanya agar lebih humoris jangan lupa jokes nya setiap chat ya";
+        }
+
         function speakText(text) {
             if (settings.voice && 'speechSynthesis' in window && !isGenerating) {
                 let msg = new SpeechSynthesisUtterance(text.replace(/<[^>]*>?/gm, '').replace(/[*#_]/g, ''));
@@ -499,7 +535,9 @@
         function updatePlaceholder() {
             const m = document.getElementById('featureMenu').value;
             if (m === 'chat') { input.placeholder = "Ask anything..."; } 
-            else { input.placeholder = `Mode ${m}...`; }
+            else if (m === '/download') { input.placeholder = "Tempel link URL video di sini..."; }
+            else if (m === '/satelit' || m === '/party') { input.placeholder = "Tekan Kirim untuk mengeksekusi"; input.value = ""; input.dispatchEvent(new Event('input')); }
+            else { input.placeholder = `Ketik untuk fitur ${m}...`; }
         }
 
         function scrollToBottom() { chatHistory.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' }); }
@@ -532,12 +570,27 @@
         }
 
         function stopGeneration() { if(abortController) abortController.abort(); finishGeneration(); }
+        
+        function findResponseText(obj) {
+            if (typeof obj === 'string') return obj;
+            if (!obj || typeof obj !== 'object') return JSON.stringify(obj);
+            if (obj.result && obj.result.response && typeof obj.result.response === 'string') return obj.result.response;
+            if (obj.result && obj.result.data && typeof obj.result.data === 'string') return obj.result.data;
+            if (obj.result && typeof obj.result === 'string') return obj.result;
+            if (obj.data && obj.data.result && typeof obj.data.result === 'string') return obj.data.result;
+            if (obj.data && obj.data.response && typeof obj.data.response === 'string') return obj.data.response;
+            if (obj.data && typeof obj.data === 'string') return obj.data;
+            if (obj.response && typeof obj.response === 'string') return obj.response;
+            if (obj.message && typeof obj.message === 'string') return obj.message;
+            return "```json\n" + JSON.stringify(obj, null, 2) + "\n```";
+        }
 
         async function sendMessage() {
             if (isGenerating) return; 
             const menu = document.getElementById('featureMenu').value;
             let rawQuery = input.value.trim();
-            if (!rawQuery && !attachedImageBase64) return; 
+            if (!rawQuery && (menu === '/party' || menu === '/satelit')) rawQuery = menu;
+            else if (!rawQuery && !attachedImageBase64) return; 
 
             let finalQuery = (menu !== 'chat' && !rawQuery.startsWith(menu)) ? `${menu} ${rawQuery}` : rawQuery;
             sfxSend.currentTime = 0; sfxSend.play().catch(()=>{});
@@ -553,20 +606,145 @@
             addMessage('user', displayQueryHTML, true); cancelImage(); saveChat();
 
             isGenerating = true; micBtn.style.display = 'none'; stopBtn.style.display = 'flex'; 
+            
+            // ==========================================
+            // FITUR SPESIFIK (Menggunakan RETURN early agar AI utama tidak terpanggil)
+            // ==========================================
+            if (finalQuery.toLowerCase() === '/party') {
+                document.body.classList.toggle('party-mode');
+                const isParty = document.body.classList.contains('party-mode');
+                const statusTxt = isParty ? "DIAKTIFKAN! Waktunya berantas galau! 🎉" : "DIMATIKAN. Kembali ke mode serius. 🛑";
+                
+                if (settings.music) {
+                    if (isParty) { bgMusic.pause(); partyMusic.play().catch(e=>console.log(e)); } 
+                    else { partyMusic.pause(); partyMusic.currentTime=0; bgMusic.play().catch(e=>console.log(e)); }
+                }
+                const bub = addMessage('ai', ""); 
+                await typeWriterEffect(bub, `Mode Pesta **${statusTxt}**`);
+                speakText(isParty ? "Mode pesta diaktifkan." : "Mode pesta dimatikan.");
+                finishGeneration(); return;
+            }
+
             showTypingIndicator(); 
 
             try {
+                if (finalQuery.toLowerCase() === '/satelit') {
+                    const satRes = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+                    const satData = await satRes.json();
+                    hideTypingIndicator(); const bub = addMessage('ai', "");
+                    await typeWriterEffect(bub, `🛰️ **Data Pelacakan Satelit ISS:**\n- Latitude: **${satData.latitude.toFixed(4)}**\n- Longitude: **${satData.longitude.toFixed(4)}**\n- Kecepatan: **${Math.round(satData.velocity)} km/jam**\n- Ketinggian: **${Math.round(satData.altitude)} km**`);
+                    finishGeneration(); return;
+                }
+
+                if (finalQuery.toLowerCase().startsWith('/cuaca ')) {
+                    const city = finalQuery.substring(7).trim();
+                    const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=id&format=json`);
+                    const geoData = await geoRes.json();
+                    hideTypingIndicator(); const bub = addMessage('ai', "");
+                    if (!geoData.results) { await typeWriterEffect(bub, `❌ Kota **${city}** tidak ditemukan di satelit.`); } 
+                    else {
+                        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geoData.results[0].latitude}&longitude=${geoData.results[0].longitude}&current_weather=true`);
+                        const weatherData = await weatherRes.json();
+                        await typeWriterEffect(bub, `📡 **Laporan Cuaca:**\nCuaca di kota **${geoData.results[0].name}** saat ini bersuhu **${weatherData.current_weather.temperature}°C** dengan kecepatan angin **${weatherData.current_weather.windspeed} km/jam**. 🌤️`);
+                    }
+                    finishGeneration(); return;
+                }
+
+                if (finalQuery.toLowerCase().startsWith('/qr ')) {
+                    const qrData = finalQuery.substring(4).trim();
+                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}`;
+                    hideTypingIndicator(); const bub = addMessage('ai', "");
+                    await typeWriterEffect(bub, `QR Code berhasil dibuat untuk: **${qrData}**\n<br><img src="${qrUrl}" alt="QR" style="background:white;padding:10px;border-radius:10px;">`);
+                    finishGeneration(); return;
+                }
+
+                if (finalQuery.toLowerCase().startsWith('/gambar ')) {
+                    const imgPrompt = finalQuery.substring(8).trim();
+                    const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(imgPrompt)}?seed=${Math.floor(Math.random()*10000)}&width=512&height=512&nologo=true`;
+                    hideTypingIndicator(); const bub = addMessage('ai', "");
+                    await typeWriterEffect(bub, `Wait Proses...\nVisualisasi untuk: **${imgPrompt}**\n<br><img src="${imgUrl}" style="border-radius:10px;margin-top:10px;max-width:100%;">`);
+                    finishGeneration(); return;
+                }
+
+                if (finalQuery.toLowerCase().startsWith('/download ')) {
+                    const videoUrl = finalQuery.substring(10).trim();
+                    const dlApiUrl = `https://api-faa.my.id/faa/aio?url=${encodeURIComponent(videoUrl)}`;
+                    
+                    hideTypingIndicator(); 
+                    const bub = addMessage('ai', "");
+                    bub.innerHTML = "<em>🔄 Sedang mengambil media...</em>";
+                    
+                    try {
+                        const dlRes = await fetch(dlApiUrl);
+                        const dlData = await dlRes.json();
+                        
+                        if (dlData.status === true && dlData.result) {
+                            const res = dlData.result;
+                            let replyText = `📥 **Berhasil Menemukan Media! (Source: ${res.source})**\n\n`;
+                            replyText += `**Judul:** ${res.title || "Tidak ada judul"}\n\n`;
+                            
+                            if (res.medias && res.medias.length > 0) {
+                                res.medias.forEach(media => {
+                                    let ext = media.extension ? media.extension.toLowerCase() : "";
+                                    let qual = media.quality ? media.quality.toLowerCase() : "";
+                                    
+                                    replyText += `**Kualitas: ${media.quality || "Default"}**\n`;
+                                    
+                                    if (ext.includes("mp4") || ext.includes("webm") || ext.includes("mkv") || qual.includes("watermark") || qual.includes("video")) {
+                                        replyText += `<video controls style="width: 100%; border-radius: 8px; margin-bottom: 5px;" src="${media.url}"></video>\n`;
+                                        replyText += `🎥 <a href="${media.url}" target="_blank" style="color:var(--accent);">Klik untuk download</a>\n\n`;
+                                    } else if (ext.includes("mp3") || ext.includes("m4a") || qual.includes("audio")) {
+                                        replyText += `<audio controls style="width: 100%; margin-bottom: 5px;" src="${media.url}"></audio>\n`;
+                                        replyText += `🎵 <a href="${media.url}" target="_blank" style="color:var(--accent);">Klik untuk download</a>\n\n`;
+                                    } else if (ext.includes("jpg") || ext.includes("png") || ext.includes("jpeg") || ext.includes("webp")) {
+                                        replyText += `<img src="${media.url}" style="width: 100%; border-radius: 8px; margin-bottom: 5px;" alt="Image">\n`;
+                                        replyText += `🖼️ <a href="${media.url}" target="_blank" style="color:var(--accent);">Klik untuk download</a>\n\n`;
+                                    } else {
+                                        replyText += `📄 <a href="${media.url}" target="_blank" style="color:var(--accent);">Klik untuk download</a>\n\n`;
+                                    }
+                                    
+                                    replyText += `---\n`;
+                                });
+                            } else {
+                                replyText += `❌ Link media tidak ditemukan di dalam respons API.\n`;
+                            }
+                            bub.innerHTML = marked.parse(replyText);
+                        } else {
+                            bub.innerHTML = marked.parse(`❌ Gagal memproses URL. Pastikan link yang dikirim valid dan tidak diprivate.`);
+                        }
+                    } catch (err) {
+                        bub.innerHTML = marked.parse(`❌ Terjadi kesalahan koneksi saat mencoba mengambil media.`);
+                    }
+                    
+                    finishGeneration(); return;
+                }
+
+                // ==========================================
+                // AI CHAT UTAMA (Terpanggil jika bukan fitur di atas)
+                // ==========================================
                 abortController = new AbortController();
+                let apiUrl = ""; 
+                const safePrompt = encodeURIComponent(getSystemPrompt()); 
                 const safeQuery = encodeURIComponent(finalQuery);
-                const apiUrl = `https://api-faa.my.id/faa/gpt-promt?prompt=jawab_singkat&query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
+
+                if (settings.apiModel === 'ditzz') {
+                    apiUrl = `https://api-faa.my.id/faa/gpt-promt?prompt=${safePrompt}&query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
+                } else if (settings.apiModel === 'bard') {
+                    apiUrl = `https://api-faa.my.id/faa/bard-google?query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
+                } else if (settings.apiModel === 'claude') {
+                    apiUrl = `https://api-faa.my.id/faa/claude-ai?text=${safeQuery}&query=${safeQuery}&q=${safeQuery}`;
+                } else if (settings.apiModel === 'api_custom') {
+                    apiUrl = `https://api-Ditzx.com/chat?text=${safeQuery}`;
+                }
                 
                 const responseText = await fetch(apiUrl, { signal: abortController.signal })
                     .then(res => res.text())
-                    .then(rawText => { try { const j = JSON.parse(rawText); return j.result?.response || j.result || rawText; } catch(e) { return rawText; } });
+                    .then(rawText => { try { return findResponseText(JSON.parse(rawText)); } catch(e) { return rawText; } });
                 
                 hideTypingIndicator();
                 if (responseText) {
-                    const replyBubble = addMessage('ai', ""); await typeWriterEffect(replyBubble, responseText);
+                    const replyBubble = addMessage('ai', ""); 
+                    await typeWriterEffect(replyBubble, responseText);
                     speakText(responseText); 
                 }
             } catch (err) {
