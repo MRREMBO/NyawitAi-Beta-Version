@@ -1,26 +1,28 @@
+    <!-- Credit: Di buat oleh Ditzz Spesial thanks faa api  siputzx api gemini api dan Community OF DITTZAW -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NyawitAI | UI Redesign V3</title>
+    <title>NyawitAI | Stabil V2</title>
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root { 
-            --bg-main: #18181c; 
-            --bg-card: #252530;
-            --bg-bubble-ai: #2a2a35;
-            --bg-bubble-user: #937cf7;
+            --bg-main: #03040b; 
+            --bg-card: #181824;
+            --bg-bubble-ai: #14141d;
+            --bg-bubble-user: #3b82f6;
             --text-main: #ffffff;
             --text-muted: #8b8b9b;
-            --accent: #937cf7;
-            --glass-border: rgba(255, 255, 255, 0.05);
+            --accent: #3b82f6;
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
         
         * { box-sizing: border-box; font-family: 'Poppins', system-ui, sans-serif; }
@@ -33,12 +35,91 @@
 
         #bg { position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center; transition: background 0.5s ease; }
 
-        /* ================= WELCOME SCREEN ================= */
+        /* =========================================================
+          JGN DI UBAH! 
+           ========================================================= */
+        #init-screen {
+            position: fixed; inset: 0; z-index: 20000;
+            background: #02040f; display: flex; flex-direction: column;
+            transition: opacity 0.8s ease, transform 0.8s ease; 
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            overflow: hidden;
+        }
+        #data-stream {
+            position: absolute; inset: 0; z-index: 1; opacity: 0.35; mix-blend-mode: screen;
+        }
+        .planet-glow {
+            position: absolute; bottom: -50vh; left: -25vw; width: 150vw; height: 100vh;
+            border-radius: 50%; background: #000; z-index: 2;
+            box-shadow: 0 -20px 150px 50px rgba(59, 130, 246, 0.4), inset 0 20px 100px rgba(79, 70, 229, 0.8);
+        }
+        .hero-nav {
+            position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 25px 60px; color: #a5b4fc; font-size: 14px; font-weight: 500;
+        }
+        .hero-logo { font-size: 18px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; letter-spacing: 1px;}
+        .hero-logo span { font-size: 24px; }
+        .hero-links { display: flex; gap: 35px; }
+        .hero-links span { cursor: pointer; transition: color 0.3s; }
+        .hero-links span:hover { color: #fff; }
+        .hero-actions { display: flex; align-items: center; gap: 25px; }
+        .hero-actions span { cursor: pointer; transition: color 0.3s; }
+        .hero-actions span:hover { color: #fff; }
+        
+        .btn-primary-glow {
+            background: linear-gradient(90deg, #4f46e5, #3b82f6); color: #fff;
+            border: none; padding: 12px 28px; border-radius: 30px; font-weight: 600; font-size: 14px;
+            cursor: pointer; box-shadow: 0 0 20px rgba(79, 70, 229, 0.6); transition: all 0.3s ease;
+        }
+        .btn-primary-glow:hover { box-shadow: 0 0 35px rgba(59, 130, 246, 0.9); transform: scale(1.05); }
+        
+        .btn-outline-glass {
+            background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 28px; border-radius: 30px; font-weight: 600; font-size: 14px; cursor: pointer;
+            backdrop-filter: blur(10px); transition: all 0.3s ease;
+        }
+        .btn-outline-glass:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255,255,255,0.4); }
+        
+        .hero-content {
+            position: relative; z-index: 10; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; flex: 1; text-align: center;
+            margin-top: -8vh; padding: 0 20px;
+        }
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px 6px 6px; border-radius: 30px; display: flex; align-items: center;
+            gap: 12px; font-size: 13px; color: #c7d2fe; margin-bottom: 35px; backdrop-filter: blur(8px);
+        }
+        .badge-new {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6); color: #fff;
+            padding: 2px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;
+        }
+        .hero-title {
+            font-size: 4.8rem; font-weight: 700; line-height: 1.1; margin: 0 0 25px 0; letter-spacing: -1px;
+            background: linear-gradient(180deg, #ffffff, #a5b4fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-title em { font-family: 'Times New Roman', Times, serif; font-style: italic; font-weight: 400; letter-spacing: 0; }
+        .hero-subtitle { font-size: 1.15rem; color: #818cf8; max-width: 600px; margin: 0 0 45px 0; line-height: 1.6; font-weight: 400; }
+        .hero-buttons { display: flex; gap: 20px; }
+        
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.8rem; }
+            .hero-subtitle { font-size: 1rem; padding: 0 10px; }
+            .hero-links, .hero-actions span { display: none; }
+            .hero-nav { padding: 20px; }
+            .hero-actions .btn-primary-glow { padding: 8px 16px; font-size: 12px; }
+            .planet-glow { bottom: -30vh; }
+        }
+
+        /* ================= LAYAR 2: ROBOT SCREEN ================= */
         #welcome-screen {
             position: fixed; inset: 0; z-index: 10000;
-            background: var(--bg-main); display: flex; flex-direction: column;
+            background: var(--bg-main); display: none; flex-direction: column;
             align-items: center; justify-content: center;
             transition: opacity 0.5s ease, transform 0.5s ease;
+            opacity: 0; transform: scale(0.95);
         }
         
         .welcome-robot {
@@ -64,7 +145,7 @@
 
         .welcome-text { text-align: center; margin-bottom: 60px; }
         .welcome-text p { color: var(--text-muted); font-size: 16px; margin: 0 0 5px 0; }
-        .welcome-text h1 { font-size: 32px; font-weight: 600; line-height: 1.2; margin: 0; letter-spacing: -0.5px; }
+        .welcome-text h1 { font-size: 32px; font-weight: 600; line-height: 1.2; margin: 0; letter-spacing: -0.5px; font-family: 'Poppins', sans-serif;}
 
         .welcome-controls {
             display: flex; align-items: center; justify-content: space-between;
@@ -87,7 +168,7 @@
         .glowing-orb-btn:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(147, 124, 247, 0.9); }
         @keyframes pulseOrb { 0% { box-shadow: 0 0 15px rgba(147, 124, 247, 0.5); } 100% { box-shadow: 0 0 35px rgba(147, 124, 247, 0.8), 0 0 60px rgba(59, 130, 246, 0.4); } }
 
-        /* ================= MAIN APP ================= */
+        /* ================= LAYAR 3: MAIN APP CHAT ================= */
         #app { 
             position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; 
             max-width: 800px; margin: 0 auto; background: var(--bg-main);
@@ -97,7 +178,8 @@
 
         header { 
             padding: 20px; display: flex; justify-content: space-between; align-items: center; 
-            background: var(--bg-main); border-bottom: 1px solid var(--glass-border); z-index: 50;
+            background: rgba(3, 4, 11, 0.8); border-bottom: 1px solid var(--glass-border); z-index: 50;
+            backdrop-filter: blur(15px);
         }
         
         .header-left { display: flex; align-items: center; gap: 15px; }
@@ -117,7 +199,7 @@
         /* SIDEBAR */
         #sidebar {
             position: fixed; left: -300px; top: 0; bottom: 0; width: 280px;
-            background: rgba(24, 24, 28, 0.95); backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px);
             border-right: 1px solid var(--glass-border); z-index: 99999;
             transition: left 0.3s ease; display: flex; flex-direction: column;
         }
@@ -133,33 +215,56 @@
         select.dropdown-menu { width: 100%; background: var(--bg-card); border: 1px solid var(--glass-border); color: #fff; padding: 10px 12px; border-radius: 12px; font-size: 13px; outline: none; margin-bottom: 5px;}
         
         .chat-item { padding: 12px 15px; border-radius:12px; cursor: pointer; display: flex; justify-content: space-between; align-items:center; background: var(--bg-card); font-size:13px; margin-bottom: 8px;}
-        .chat-item.active { background: rgba(147, 124, 247, 0.2); border: 1px solid var(--accent); color:white;}
+        .chat-item.active { background: rgba(59, 130, 246, 0.2); border: 1px solid var(--accent); color:white;}
         .chat-item button { background: none; border: none; cursor: pointer; color: var(--text-muted);}
 
-        /* CHAT HISTORY */
+        /* CHAT HISTORY & EMPTY STATE */
         #chat-history { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; scrollbar-width: none; }
         #chat-history::-webkit-scrollbar { display: none; }
 
-        /* EMPTY STATE CARDS */
-        #empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
-        .greeting-text { font-size: 14px; line-height: 1.6; margin-bottom: 30px; max-width: 80%; }
-        .cards-container { display: flex; gap: 15px; overflow-x: auto; width: 100%; padding-bottom: 10px; scrollbar-width: none; padding: 0 20px; }
-        .topic-card { min-width: 140px; padding: 20px; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; text-align: left; height: 160px; }
-        .card-1 { background: #bba8ff; color: #18181c; }
-        .card-2 { background: #ffb8d0; color: #18181c; }
-        .card-3 { background: #86efac; color: #18181c; }
-        .card-icon { width: 30px; height: 30px; background: rgba(0,0,0,0.1); border-radius: 8px; display:flex; align-items:center; justify-content:center; margin-bottom: 20px; font-size: 16px;}
-        .topic-card h4 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.3;}
+        #empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; width: 100%; }
+        .greeting-text { font-size: 14px; line-height: 1.6; margin-bottom: 40px; max-width: 80%; }
+
+        /* CAROUSEL */
+        .carousel-wrapper {
+            width: 100%; overflow: hidden; display: flex; padding: 10px 0 20px 0;
+            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+        }
+        
+        .cards-carousel {
+            display: flex; gap: 15px; overflow-x: auto; scroll-behavior: auto;
+            scrollbar-width: none; -ms-overflow-style: none; padding: 0 20px; cursor: grab;
+        }
+        .cards-carousel::-webkit-scrollbar { display: none; }
+        .cards-carousel:active { cursor: grabbing; }
+
+        .topic-card { 
+            min-width: 130px; width: 130px; padding: 15px; border-radius: 16px; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            cursor: pointer; text-align: left; height: 130px; transition: transform 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .topic-card:hover { transform: translateY(-5px); }
+        .topic-card:active { transform: translateY(0); }
+        
+        .card-1 { background: linear-gradient(135deg, #2d2b45, #1f1d33); color: white; }
+        .card-2 { background: linear-gradient(135deg, #3d2331, #2b1822); color: white; }
+        .card-3 { background: linear-gradient(135deg, #1c362a, #13241c); color: white; }
+        .card-4 { background: linear-gradient(135deg, #3d371d, #262313); color: white; }
+        .card-icon { width: 30px; height: 30px; background: rgba(255,255,255,0.1); border-radius: 8px; display:flex; align-items:center; justify-content:center; margin-bottom: 10px; font-size: 16px;}
+        .topic-card h4 { margin: 0; font-size: 13px; font-weight: 600; line-height: 1.3; color: #eee;}
 
         /* BUBBLES */
         .msg-container { display: flex; width: 100%; margin-bottom: 5px; }
         .msg-container.user { justify-content: flex-end; }
         .msg-container.ai { justify-content: flex-start; }
-        .bubble { max-width: 85%; padding: 14px 18px; border-radius: 24px; font-size: 14px; line-height: 1.6; word-wrap: break-word; position: relative; }
+        .bubble { max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 14px; line-height: 1.6; word-wrap: break-word; position: relative; }
         .user .bubble { background: var(--bg-bubble-user); color: white; border-bottom-right-radius: 6px; }
-        .ai .bubble { background: var(--bg-bubble-ai); color: white; border-bottom-left-radius: 6px; }
-        .ai .bubble pre { background: #1a1a24; padding: 35px 15px 15px 15px; border-radius: 12px; overflow-x: auto; font-size: 12px; margin: 15px 0; border: 1px solid var(--glass-border); position: relative; }
+        .ai .bubble { background: var(--bg-bubble-ai); border: 1px solid var(--glass-border); color: white; border-bottom-left-radius: 6px; }
+        .ai .bubble pre { background: #0c0c12; padding: 35px 15px 15px 15px; border-radius: 12px; overflow-x: auto; font-size: 12px; margin: 15px 0; border: 1px solid var(--glass-border); position: relative; }
         .ai .bubble img, .user .bubble img { max-width: 100%; border-radius: 12px; margin-top: 10px; display: block; }
+        
         .code-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 10; }
         .action-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;}
         
@@ -170,7 +275,7 @@
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
         /* FOOTER INPUT */
-        footer { padding: 15px 20px 25px 20px; background: var(--bg-main); position: relative; }
+        footer { padding: 15px 20px 25px 20px; background: rgba(3, 4, 11, 0.9); backdrop-filter: blur(15px); position: relative; }
         .input-box { display: flex; align-items: center; background: var(--bg-card); border-radius: 30px; padding: 8px 15px; gap: 10px; border: 1px solid var(--glass-border); }
         .plus-btn { background: rgba(255,255,255,0.05); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;}
         textarea#userInput { flex: 1; background: transparent; border: none; color: white; padding: 8px 0; font-size: 14px; outline: none; resize: none; max-height: 100px; line-height: 1.4; scrollbar-width: none; }
@@ -181,7 +286,7 @@
         #imgPreviewBox img { height: 60px; border-radius: 8px; }
         .cancel-img-btn { position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 12px; display:flex; align-items:center; justify-content:center;}
         
-        #codePreviewModal { position: fixed; inset: 0; z-index: 100000; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+        #codePreviewModal { position: fixed; inset: 0; z-index: 100000; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .preview-container { width: 90%; height: 85%; max-width: 800px; background: var(--bg-main); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--glass-border); }
         .preview-header { background: var(--bg-card); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--accent); }
         .preview-header span { color: white; font-weight: 600; font-size: 14px; }
@@ -200,9 +305,45 @@
 
     <div id="bg"></div>
 
+    <!-- =========================================================
+         GALAXY MATRIX OPENING JGN DI UBAH! 
+         ========================================================= -->
+    <div id="init-screen">
+        <canvas id="data-stream"></canvas>
+        <div class="planet-glow"></div>
+        
+        <nav class="hero-nav">
+            <div class="hero-logo"><span>🌌</span> Nyawit AI</div>
+            <div class="hero-links">
+                <span>Home</span>
+                <span onclick="alert('Fitur ini akan mendatang')">Features</span>
+                <span onclick="alert('Fitur ini akan mendatang')">Pricing</span>
+                <span onclick="alert('Fitur ini akan mendatang')">Showcase</span>
+            </div>
+            <div class="hero-actions">
+                <span onclick="alert('Fitur ini akan mendatang')">Log in</span>
+                <button class="btn-primary-glow" onclick="transitionToRobot()">Start Free</button>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-new">New</span> Update Launching new Fitur Downloader
+            </div>
+            <h1 class="hero-title">The First AI Nyawit Ai<em> System in Indonesia</em>.<br>Real-Time Chat.</h1>
+            <p class="hero-subtitle">The all-in-one intelligence platform for data-driven organizations.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary-glow" onclick="transitionToRobot()">Start Free</button>
+                <button class="btn-outline-glass" onclick="alert('Fitur ini akan mendatang')">Book a Demo</button>
+            </div>
+        </div>
+    </div>
+    <!-- ========================================================= -->
+
+    <!-- ================= LAYAR 2: ROBOT WELCOME ================= -->
     <div id="welcome-screen">
         <div class="welcome-robot">
-            <div class="bot-greeting-bubble">Hey Tam 👋</div>
+            <div class="bot-greeting-bubble">Hey Friend 👋</div>
         </div>
         <div class="welcome-text">
             <p>Welcome back</p>
@@ -210,12 +351,13 @@
         </div>
         <div class="welcome-controls">
             <i class="fa-solid fa-microphone ctrl-icon" onclick="openAppAndDictate()"></i>
+            <!-- Logika Tombol Start App ke Chat Utama Jangan Di Ubah-->
             <div class="glowing-orb-btn" onclick="startApp()"></div>
             <i class="fa-regular fa-keyboard ctrl-icon" onclick="startApp()"></i>
         </div>
     </div>
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR MENU ALA ALA CHAT GPT LOH REK 😹 -->
     <div id="sidebar">
         <div class="sidebar-header">
             <h3><i class="fa-solid fa-layer-group"></i> Menu & Histori</h3>
@@ -258,13 +400,13 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
+    <!-- ================= JANGAN DI UBAH KALO DI UBAH BAKAL ERROR ================= -->
     <div id="app">
         <header>
             <div class="header-left">
                 <button class="back-btn" onclick="backToWelcome()"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="bot-info-header">
-                    <span class="bot-name">Kohaku bot</span>
+                    <span class="bot-name">Nyawit Ai V2</span>
                     <span class="bot-status"><span class="status-dot"></span> Online</span>
                 </div>
             </div>
@@ -272,23 +414,7 @@
         </header>
 
         <main id="chat-history">
-            <div id="empty-state">
-                <div class="greeting-text">
-                    <span style="font-size:20px;">👋</span><br><br>
-                    Hi! I'm a Bot. Let me know if you have any questions.<br><br>
-                    <span style="color:var(--text-muted); font-size:12px;">Select the topic or write below.</span>
-                </div>
-                <div class="cards-container">
-                    <div class="topic-card card-1" onclick="sendCardText('Buatkan jadwal harian produktif')">
-                        <div class="card-icon">📓</div>
-                        <h4>Quickly add a page<br><span style="font-size:11px; font-weight:400;">Notion</span></h4>
-                    </div>
-                    <div class="topic-card card-2" onclick="sendCardText('Buatkan to-do list tugas')">
-                        <div class="card-icon">✅</div>
-                        <h4>Organize tasks<br><span style="font-size:11px; font-weight:400;">Todoist</span></h4>
-                    </div>
-                </div>
-            </div>
+            <!-- Tempat kartu di-inject No Ubah² Mek -->
         </main>
         
         <footer>
@@ -307,7 +433,7 @@
         </footer>
     </div>
 
-    <!-- PREVIEW KODE -->
+    <!-- VIEW CODE MAS AMBAA 😹-->
     <div id="codePreviewModal">
         <div class="preview-container">
             <div class="preview-header">
@@ -319,6 +445,84 @@
     </div>
 
     <script>
+        // ================= ANIMASI MATRIX GALAXY AI =================
+        let isGalaxyActive = true; 
+        const canvas = document.getElementById('data-stream');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const matrixLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-*/=<>[]{}';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            if (!isGalaxyActive) return; 
+            ctx.fillStyle = 'rgba(2, 4, 15, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#4f46e5'; 
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixLetters.charAt(Math.floor(Math.random() * matrixLetters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+
+        // ================= LOGIKA TRANSISI LAYAR =================
+        const initScreen = document.getElementById('init-screen');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const appContainer = document.getElementById('app');
+
+        // Transisi dari Galaxy (1) ke Robot (2)
+        function transitionToRobot() {
+            isGalaxyActive = false; // Matikan animasi matrix
+            initScreen.style.opacity = '0';
+            initScreen.style.transform = 'scale(1.05)';
+            
+            setTimeout(() => {
+                initScreen.style.display = 'none';
+                welcomeScreen.style.display = 'flex';
+                // Trigger reflow untuk memastikan animasi CSS berjalan
+                void welcomeScreen.offsetWidth;
+                welcomeScreen.style.opacity = '1';
+                welcomeScreen.style.transform = 'scale(1)';
+            }, 500);
+        }
+
+        // Transisi dari Robot (2) ke Chat App (3)
+        function startApp() {
+            loadSettingsLocal();
+            if(settings.music) bgMusic.play().catch(e=>{});
+            
+            welcomeScreen.style.opacity = '0';
+            welcomeScreen.style.transform = 'scale(1.05)';
+            
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                appContainer.classList.add('active');
+                switchSession(currentSessionId); 
+                renderSidebarList();
+                checkEmptyState();
+            }, 500);
+        }
+
+        function openAppAndDictate() { startApp(); setTimeout(() => startDictation(), 600); }
+        
+        // Balik dari App (3) ke Robot (2)
+        function backToWelcome() {
+            appContainer.classList.remove('active');
+            setTimeout(() => {
+                welcomeScreen.style.display = 'flex';
+                void welcomeScreen.offsetWidth;
+                welcomeScreen.style.opacity = '1';
+                welcomeScreen.style.transform = 'scale(1)';
+            }, 500);
+        }
+
+
         // ================= BYPASS KEAMANAN LOCALSTORAGE =================
         let memoryStorage = {};
         const safeStorage = {
@@ -326,10 +530,7 @@
             setItem: (k, v) => { try { localStorage.setItem(k, v); } catch(e) { memoryStorage[k] = v; } },
             removeItem: (k) => { try { localStorage.removeItem(k); } catch(e) { delete memoryStorage[k]; } }
         };
-        // =================================================================
 
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const appContainer = document.getElementById('app');
         const chatHistory = document.getElementById('chat-history');
         const input = document.getElementById('userInput');
         const micBtn = document.getElementById('micBtn');
@@ -353,31 +554,6 @@
         } catch(e) {}
         let chatSessions = parsedSessions;
 
-        function startApp() {
-            loadSettingsLocal();
-            if(settings.music) bgMusic.play().catch(e=>{});
-            welcomeScreen.style.opacity = '0';
-            welcomeScreen.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                welcomeScreen.style.display = 'none';
-                appContainer.classList.add('active');
-                switchSession(currentSessionId); 
-                renderSidebarList();
-                checkEmptyState();
-            }, 500);
-        }
-
-        function openAppAndDictate() { startApp(); setTimeout(() => startDictation(), 600); }
-        function backToWelcome() {
-            appContainer.classList.remove('active');
-            setTimeout(() => {
-                welcomeScreen.style.display = 'flex';
-                void welcomeScreen.offsetWidth;
-                welcomeScreen.style.opacity = '1';
-                welcomeScreen.style.transform = 'scale(1)';
-            }, 500);
-        }
-
         input.addEventListener("input", function() { 
             this.style.height = "auto"; 
             this.style.height = (this.scrollHeight < 100 ? this.scrollHeight : 100) + "px"; 
@@ -388,22 +564,104 @@
             }
         });
 
+        // ================= LOGIC CAROUSEL =================
+        let autoScrollTimer;
+        let isDraggingCarousel = false;
+
+        function initCarousel() {
+            const carousel = document.querySelector('.cards-carousel');
+            if(!carousel) return;
+
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            const startAutoScroll = () => {
+                clearInterval(autoScrollTimer);
+                autoScrollTimer = setInterval(() => {
+                    carousel.scrollLeft += 1;
+                    if (carousel.scrollLeft >= (carousel.scrollWidth / 2)) {
+                        carousel.scrollLeft = 0; 
+                    }
+                }, 25);
+            };
+
+            const stopAutoScroll = () => clearInterval(autoScrollTimer);
+
+            carousel.addEventListener('mousedown', (e) => {
+                isDown = true; isDraggingCarousel = false;
+                startX = e.pageX - carousel.offsetLeft;
+                scrollLeft = carousel.scrollLeft;
+                stopAutoScroll();
+            });
+            carousel.addEventListener('mouseleave', () => { isDown = false; startAutoScroll(); });
+            carousel.addEventListener('mouseup', () => { isDown = false; startAutoScroll(); });
+            carousel.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - carousel.offsetLeft;
+                const walk = (x - startX) * 2; 
+                if (Math.abs(walk) > 5) isDraggingCarousel = true; 
+                carousel.scrollLeft = scrollLeft - walk;
+            });
+
+            carousel.addEventListener('touchstart', () => {
+                stopAutoScroll(); isDraggingCarousel = true;
+            }, {passive: true});
+            carousel.addEventListener('touchend', () => {
+                setTimeout(() => isDraggingCarousel = false, 100);
+                startAutoScroll();
+            });
+
+            startAutoScroll();
+        }
+
+        // FUNGSI EMPTY STATE
         function checkEmptyState() {
             const emptyState = document.getElementById('empty-state');
             const msgs = chatHistory.querySelectorAll('.msg-container');
+            
             if(msgs.length === 0) {
                 if(!emptyState) {
                     chatHistory.innerHTML = `<div id="empty-state">
-                        <div class="greeting-text"><span style="font-size:20px;">👋</span><br><br>Hi! I'm a Bot. Let me know if you have any questions.<br><br><span style="color:var(--text-muted); font-size:12px;">Select the topic or write below.</span></div>
-                        <div class="cards-container">
-                            <div class="topic-card card-1" onclick="sendCardText('Buatkan jadwal harian produktif')"><div class="card-icon">📓</div><h4>Quickly add a page<br><span style="font-size:11px; font-weight:400;">Notion</span></h4></div>
-                            <div class="topic-card card-2" onclick="sendCardText('Buatkan to-do list tugas')"><div class="card-icon">✅</div><h4>Organize tasks<br><span style="font-size:11px; font-weight:400;">Todoist</span></h4></div>
-                        </div></div>`;
+                        <div class="greeting-text">
+                            <span style="font-size:32px; display:block; margin-bottom:10px;">👋</span>
+                            <span style="font-size: 18px; font-weight: 500;">Hi! I'm a Bot.</span><br>
+                            <span style="color: #a1a1aa; font-size: 13px;">Let me know if you have any questions.</span>
+                        </div>
+                        
+                        <div class="carousel-wrapper">
+                            <div class="cards-carousel">
+                                <div class="topic-card card-1" onclick="sendCardText('/gambar kucing lucu di luar angkasa')"><div class="card-icon">🎨</div><h4>Create Image<br><span style="font-size:11px; font-weight:400; opacity:0.7;">AI Generator</span></h4></div>
+                                <div class="topic-card card-2" onclick="sendCardText('/download https://vt.tiktok.com/ZSj123456/')"><div class="card-icon">📥</div><h4>Download Media<br><span style="font-size:11px; font-weight:400; opacity:0.7;">Tiktok/IG/DLL</span></h4></div>
+                                <div class="topic-card card-3" onclick="sendCardText('/cuaca Jakarta')"><div class="card-icon">☁️</div><h4>Cek Cuaca<br><span style="font-size:11px; font-weight:400; opacity:0.7;">Realtime Info</span></h4></div>
+                                <div class="topic-card card-4" onclick="sendCardText('/satelit')"><div class="card-icon">🛰️</div><h4>Lacak ISS<br><span style="font-size:11px; font-weight:400; opacity:0.7;">Live Tracker</span></h4></div>
+                                <div class="topic-card card-1" onclick="sendCardText('/qr https://google.com')"><div class="card-icon">🔲</div><h4>Buat QR Code<br><span style="font-size:11px; font-weight:400; opacity:0.7;">Generator</span></h4></div>
+                                
+                                <!-- Duplikasi untuk loop berjalan mulus seperti doi 😹-->
+                                <div class="topic-card card-1" onclick="sendCardText('/gambar kucing lucu di luar angkasa')"><div class="card-icon">🎨</div><h4>Create Image<br><span style="font-size:11px; font-weight:400; opacity:0.7;">AI Generator</span></h4></div>
+                                <div class="topic-card card-2" onclick="sendCardText('/download https://vt.tiktok.com/ZSj123456/')"><div class="card-icon">📥</div><h4>Download Media<br><span style="font-size:11px; font-weight:400; opacity:0.7;">Tiktok/IG/DLL</span></h4></div>
+                                <div class="topic-card card-3" onclick="sendCardText('/cuaca Jakarta')"><div class="card-icon">☁️</div><h4>Cek Cuaca<br><span style="font-size:11px; font-weight:400; opacity:0.7;">Realtime Info</span></h4></div>
+                                <div class="topic-card card-4" onclick="sendCardText('/satelit')"><div class="card-icon">🛰️</div><h4>Lacak ISS<br><span style="font-size:11px; font-weight:400; opacity:0.7;">Live Tracker</span></h4></div>
+                                <div class="topic-card card-1" onclick="sendCardText('/qr https://google.com')"><div class="card-icon">🔲</div><h4>Buat QR Code<br><span style="font-size:11px; font-weight:400; opacity:0.7;">Generator</span></h4></div>
+                            </div>
+                        </div>
+                    </div>`;
+                    setTimeout(initCarousel, 50);
                 }
-            } else { if(emptyState) emptyState.remove(); }
+            } else { 
+                if(emptyState) {
+                    emptyState.remove();
+                    if(typeof autoScrollTimer !== 'undefined') clearInterval(autoScrollTimer);
+                }
+            }
         }
 
-        function sendCardText(text) { input.value = text; input.dispatchEvent(new Event('input')); sendMessage(); }
+        function sendCardText(text) { 
+            if(isDraggingCarousel) { isDraggingCarousel = false; return; }
+            input.value = text; input.dispatchEvent(new Event('input')); sendMessage(); 
+        }
+        
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
         
         function renderSidebarList() {
@@ -543,16 +801,94 @@
         function scrollToBottom() { chatHistory.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' }); }
         function clearChat() { if(confirm("Bersihkan obrolan ini?")) { chatHistory.innerHTML = ''; checkEmptyState(); saveChat(); toggleSidebar(); } }
 
-        function addMessage(role, text, isHTML = false) {
-            const emptyState = document.getElementById('empty-state'); if(emptyState) emptyState.remove();
+        function addMessage(role, text, isHTML = false, disableBubbleStyle = false) {
+            const emptyState = document.getElementById('empty-state'); 
+            if(emptyState) {
+                emptyState.remove();
+                if(typeof autoScrollTimer !== 'undefined') clearInterval(autoScrollTimer);
+            }
+            
             const container = document.createElement('div'); container.className = `msg-container ${role}`;
-            const bubble = document.createElement('div'); bubble.className = 'bubble';
+            const bubble = document.createElement('div'); 
+            
+            if (disableBubbleStyle) {
+                bubble.style.cssText = "width: 100%; display: flex; justify-content: flex-start;";
+            } else {
+                bubble.className = 'bubble';
+            }
+            
             if (isHTML) bubble.innerHTML = text; else bubble.innerText = text;
             container.appendChild(bubble); chatHistory.appendChild(container); scrollToBottom(); return bubble;
         }
 
+        // ==========================================
+        // FUNGSI PANDUAN OTOMATIS
+        // ==========================================
+        function showPanduanOtomatis() {
+            const panduanHTML = `
+            <div style="background: #191924; border-radius: 16px; padding: 22px; color: #fff; width: 100%; max-width: 450px; font-family: sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; margin-bottom: 20px;">
+                    <i class="fa-solid fa-bolt" style="color: #fff; font-size: 18px;"></i> Panduan Fitur Bot
+                </div>
+                
+                <div style="display: flex; flex-direction: column;">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+                        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: #f4f4f5;">
+                            <span style="font-size: 16px;">📥</span> <span>Download Media</span>
+                        </div>
+                        <div style="background: rgba(147, 124, 247, 0.1); color: #bba8ff; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(147, 124, 247, 0.25); font-family: monospace; font-size: 12px; letter-spacing: 0.5px;">
+                            /download &lt;link&gt;
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+                        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: #f4f4f5;">
+                            <span style="font-size: 16px;">🎨</span> <span>Buat Gambar AI</span>
+                        </div>
+                        <div style="background: rgba(147, 124, 247, 0.1); color: #bba8ff; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(147, 124, 247, 0.25); font-family: monospace; font-size: 12px; letter-spacing: 0.5px;">
+                            /gambar &lt;prompt&gt;
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+                        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: #f4f4f5;">
+                            <span style="font-size: 16px;">☁️</span> <span>Cek Cuaca Kota</span>
+                        </div>
+                        <div style="background: rgba(147, 124, 247, 0.1); color: #bba8ff; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(147, 124, 247, 0.25); font-family: monospace; font-size: 12px; letter-spacing: 0.5px;">
+                            /cuaca &lt;kota&gt;
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+                        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: #f4f4f5;">
+                            <span style="font-size: 16px;">🔲</span> <span>Buat QR Code</span>
+                        </div>
+                        <div style="background: rgba(147, 124, 247, 0.1); color: #bba8ff; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(147, 124, 247, 0.25); font-family: monospace; font-size: 12px; letter-spacing: 0.5px;">
+                            /qr &lt;teks&gt;
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0 0 0;">
+                        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: #f4f4f5;">
+                            <span style="font-size: 16px;">🛰️</span> <span>Lacak ISS</span>
+                        </div>
+                        <div style="background: rgba(147, 124, 247, 0.1); color: #bba8ff; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(147, 124, 247, 0.25); font-family: monospace; font-size: 12px; letter-spacing: 0.5px;">
+                            /satelit
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>`;
+            addMessage('ai', panduanHTML, true, true);
+        }
+
         function showTypingIndicator() {
-            const emptyState = document.getElementById('empty-state'); if(emptyState) emptyState.remove();
+            const emptyState = document.getElementById('empty-state'); 
+            if(emptyState) {
+                emptyState.remove();
+                if(typeof autoScrollTimer !== 'undefined') clearInterval(autoScrollTimer);
+            }
             const container = document.createElement('div'); container.className = `msg-container ai`; container.id = "typingIndicator";
             const bubble = document.createElement('div'); bubble.className = 'bubble typing-indicator';
             bubble.innerHTML = `<span></span><span></span><span></span>`;
@@ -603,13 +939,17 @@
 
             input.value = ''; input.style.height = "auto"; input.blur(); 
             sendBtn.style.display = 'none'; micBtn.style.display = 'flex';
-            addMessage('user', displayQueryHTML, true); cancelImage(); saveChat();
-
+            
+            addMessage('user', displayQueryHTML, true); cancelImage(); 
+            
+            const totalPesanUser = chatHistory.querySelectorAll('.msg-container.user').length;
+            if (totalPesanUser === 1) {
+                showPanduanOtomatis();
+            }
+            
+            saveChat();
             isGenerating = true; micBtn.style.display = 'none'; stopBtn.style.display = 'flex'; 
             
-            // ==========================================
-            // FITUR SPESIFIK (Menggunakan RETURN early agar AI utama tidak terpanggil)
-            // ==========================================
             if (finalQuery.toLowerCase() === '/party') {
                 document.body.classList.toggle('party-mode');
                 const isParty = document.body.classList.contains('party-mode');
@@ -719,9 +1059,6 @@
                     finishGeneration(); return;
                 }
 
-                // ==========================================
-                // AI CHAT UTAMA (Terpanggil jika bukan fitur di atas)
-                // ==========================================
                 abortController = new AbortController();
                 let apiUrl = ""; 
                 const safePrompt = encodeURIComponent(getSystemPrompt()); 
