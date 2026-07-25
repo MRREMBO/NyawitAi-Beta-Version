@@ -1065,7 +1065,7 @@
                 const safeQuery = encodeURIComponent(finalQuery);
 
                 if (settings.apiModel === 'ditzz') {
-                    apiUrl = `https://api-faa.my.id/faa/gpt-promt?prompt=${safePrompt}&query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
+                    apiUrl = `https://api-faa.my.id/faa/ai-promt?prompt=${safePrompt}&query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
                 } else if (settings.apiModel === 'bard') {
                     apiUrl = `https://api-faa.my.id/faa/bard-google?query=${safeQuery}&text=${safeQuery}&q=${safeQuery}`;
                 } else if (settings.apiModel === 'claude') {
